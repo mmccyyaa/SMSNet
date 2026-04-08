@@ -195,9 +195,21 @@ class MSSPD(nn.Module):
 class MBFusionA(nn.Module):
     def __init__(self, in_channel_list: list[int], out_channels: int):
         super().__init__()
-        self.cv1 = Conv(in_channel_list[0], out_channels, act=nn.ReLU()) if in_channel_list[0] != out_channels else nn.Identity()
-        self.cv2 = Conv(in_channel_list[1], out_channels, act=nn.ReLU()) if in_channel_list[1] != out_channels else nn.Identity()
-        self.cv3 = Conv(in_channel_list[2], out_channels, act=nn.ReLU()) if in_channel_list[2] != out_channels else nn.Identity()
+        self.cv1 = (
+            Conv(in_channel_list[0], out_channels, act=nn.ReLU())
+            if in_channel_list[0] != out_channels
+            else nn.Identity()
+        )
+        self.cv2 = (
+            Conv(in_channel_list[1], out_channels, act=nn.ReLU())
+            if in_channel_list[1] != out_channels
+            else nn.Identity()
+        )
+        self.cv3 = (
+            Conv(in_channel_list[2], out_channels, act=nn.ReLU())
+            if in_channel_list[2] != out_channels
+            else nn.Identity()
+        )
         self.cv_fuse = Conv(out_channels * 3, out_channels, act=nn.ReLU())
         self.downsample_avg = nn.AvgPool2d(kernel_size=2, stride=2)
         self.downsample_max = nn.MaxPool2d(kernel_size=2, stride=2)
@@ -213,9 +225,21 @@ class MBFusionA(nn.Module):
 class MBFusionB(nn.Module):
     def __init__(self, in_channel_list: list[int], out_channels: int):
         super().__init__()
-        self.cv1 = Conv(in_channel_list[0], out_channels, act=nn.ReLU()) if in_channel_list[0] != out_channels else nn.Identity()
-        self.cv2 = Conv(in_channel_list[1], out_channels, act=nn.ReLU()) if in_channel_list[1] != out_channels else nn.Identity()
-        self.cv3 = Conv(in_channel_list[2], out_channels, act=nn.ReLU()) if in_channel_list[2] != out_channels else nn.Identity()
+        self.cv1 = (
+            Conv(in_channel_list[0], out_channels, act=nn.ReLU())
+            if in_channel_list[0] != out_channels
+            else nn.Identity()
+        )
+        self.cv2 = (
+            Conv(in_channel_list[1], out_channels, act=nn.ReLU())
+            if in_channel_list[1] != out_channels
+            else nn.Identity()
+        )
+        self.cv3 = (
+            Conv(in_channel_list[2], out_channels, act=nn.ReLU())
+            if in_channel_list[2] != out_channels
+            else nn.Identity()
+        )
         self.cv_fuse = Conv(out_channels * 3, out_channels, act=nn.ReLU())
 
     def forward(self, x: list[torch.Tensor]) -> torch.Tensor:
@@ -229,8 +253,16 @@ class MBFusionB(nn.Module):
 class MBFusionC(nn.Module):
     def __init__(self, in_channel_list: list[int], out_channels: int):
         super().__init__()
-        self.cv1 = Conv(in_channel_list[0], out_channels, act=nn.ReLU()) if in_channel_list[0] != out_channels else nn.Identity()
-        self.cv2 = Conv(in_channel_list[1], out_channels, act=nn.ReLU()) if in_channel_list[1] != out_channels else nn.Identity()
+        self.cv1 = (
+            Conv(in_channel_list[0], out_channels, act=nn.ReLU())
+            if in_channel_list[0] != out_channels
+            else nn.Identity()
+        )
+        self.cv2 = (
+            Conv(in_channel_list[1], out_channels, act=nn.ReLU())
+            if in_channel_list[1] != out_channels
+            else nn.Identity()
+        )
         self.cv_fuse = Conv(out_channels * 2, out_channels, act=nn.ReLU())
 
     def forward(self, x: list[torch.Tensor]) -> torch.Tensor:
@@ -298,8 +330,7 @@ class STHead(Detect):
         self.dyhead = nn.Sequential(*[LightDyHeadBlockM(ch[0], ch[1]) for _ in range(block_num)])
         c2, c3 = max((16, ch[0] // 4, self.reg_max * 4)), max(ch[0], self.nc)
         self.cv2 = nn.ModuleList(
-            nn.Sequential(SlimGSConv(x, c2, 3), SlimGSConv(c2, c2, 3), nn.Conv2d(c2, 4 * self.reg_max, 1))
-            for x in ch
+            nn.Sequential(SlimGSConv(x, c2, 3), SlimGSConv(c2, c2, 3), nn.Conv2d(c2, 4 * self.reg_max, 1)) for x in ch
         )
         self.cv3 = nn.ModuleList(
             nn.Sequential(
